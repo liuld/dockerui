@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% include 'header.html' %}
+{% endblock %}
+
+{% block aside %}
+    {% include 'aside.html' %}
+{% endblock %}
+
+{% block main %}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-th-list"></i> Data Table</h1>
+          <p>Table to display analytical data effectively</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">Tables</li>
+          <li class="breadcrumb-item active"><a href="#">Data Table</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <h3 class="tile-title">添加用户组</h3>
+            <div class="tile-body">
+              {% import '_form.html' as forms %}
+              <form class="form-horizontal" method="post" href="{{ url_for('groups_blueprint.group_add') }}">
+                {{ forms.render(form) }}
+                <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>添加</button>&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary" href="{{ url_for('groups_blueprint.group_list') }}"><i class="fa fa-fw fa-lg fa-times-circle"></i>取消</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+{% endblock %}
