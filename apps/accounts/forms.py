@@ -3,9 +3,9 @@
 
 
 from flask_wtf import FlaskForm
-from apps.accounts.models import User, Group
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Length, Regexp, EqualTo, Email, ValidationError
+from apps.accounts.models import User, Group, Role, Permission
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, Length, Regexp, EqualTo, Email
 
 
 class AddUserForm(FlaskForm):
@@ -46,5 +46,34 @@ class AddGroupForm(FlaskForm):
     def verify_name(self, field):
         group = Group.query.filter_by(name=field.data).all()
         if group:
-            raise ValidationError(message="用户组名称已存在")
+            field.errors = ("用户组名称已存在", )
         return field
+
+
+class AddRoleForm(FlaskForm):
+    name = StringField('角色名称', validators=[DataRequired(), Length(1, 32)], render_kw={"placeholder": "请输入角色名称"})
+    desc = StringField('角色描述', validators=[DataRequired(), Length(1, 255)], render_kw={"placeholder": "请输入角色描述"})
+
+    def verify_name(self, field):
+        role = Role.query.filter_by(name=field.data).all()
+        if role:
+            field.errors = ("角色名称已存在",)
+        return field
+
+
+class AddPermissionForm(FlaskForm):
+    name = StringField('权限名称', validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": "请输入权限名称"})
+    dis_name = StringField('权限别名', validators=[DataRequired(), Length(1, 32)], render_kw={"placeholder": "请输入权限别名"})
+    desc = StringField('权限描述', validators=[DataRequired(), Length(1, 255)], render_kw={"placeholder": "请输入权限描述"})
+
+    def verify_field(self, form, field_name):
+        if field_name == 'name':
+            permission = Permission.query.filter_by(name=form.name.data).all()
+            if permission:
+                form.name.errors = ("权限名称已存在",)
+            return form
+        if field_name == 'dis_name':
+            permission = Permission.query.filter_by(dis_name=form.dis_name.data).all()
+            if permission:
+                form.dis_name.errors = ("权限别名",)
+            return form

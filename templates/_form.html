@@ -1,0 +1,43 @@
+{% macro render(form) -%}
+
+{% for field in form %}
+  {% if field.type in ['CSRFTokenField', 'HiddenField'] %}<!--CSR和隐藏字段-->
+    {{ field() }}
+
+  {% elif field.type == "BooleanField" %}<!--Boolean类型字段-->
+    <div class="checkbox">
+    <label>
+      {{ field() }} {{ field.label }}
+    </label>
+    </div>
+
+  {% elif field.type == "RadioField" %}<!--Radio类型字段-->
+    {{ field.label }}
+    {% for subfield in field %}
+      <div class="radio">
+        <label>{{ subfield }} {{ subfield.label }}</label>
+      </div>
+    {% endfor %}
+
+  {% else %}
+    <div class="clearfix {% if field.errors %}has-error{% endif %} form-group"><!--剩下的一般类型字段-->
+      {{ field.label }}
+        {% if field.type == "TextAreaField" %}
+          {{ field(class_="form-control", rows=10) }}
+        {% else %}
+          {{ field(class_="form-control") }}
+        {% endif %}
+        {% if field.errors or field.help_text %}
+          <span class="help-block text-danger">
+          {% if field.errors %}
+            {{ field.errors|join(' ') }}
+          {% else %}
+            {{ field.help_text }}
+          {% endif %}
+          </span>
+        {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% endmacro %}

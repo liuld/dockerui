@@ -12,7 +12,7 @@ class Permission(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(64), nullable=False, unique=True)
     dis_name = db.Column(db.String(32), nullable=False, unique=True)
-    desc = db.Column(db.String(255), nullable=False, unique=True)
+    desc = db.Column(db.String(255), nullable=False)
 
     def __repr__(self):
         return '<Permission {}: {}({})>'.format(self.id, self.dis_name, self.name)
@@ -25,7 +25,7 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(32), unique=True, nullable=False)
-    desc = db.Column(db.String(255), unique=True, nullable=False)
+    desc = db.Column(db.String(255), nullable=False)
     ctime = db.Column(db.DateTime, default=datetime.now)
     permissions = db.relationship('Permission', secondary='role_permission', backref=db.backref('roles', lazy='dynamic'))
 

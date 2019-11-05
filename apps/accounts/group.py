@@ -2,7 +2,7 @@
 # _*_ coding: utf-8 _*_
 
 
-from flask import Blueprint, request, redirect, url_for, flash
+from flask import Blueprint, request, redirect, url_for
 from wtforms.validators import ValidationError
 from flask import render_template
 from apps.accounts.models import Group, db
@@ -23,15 +23,15 @@ def group_add():
     form = AddGroupForm()
     if request.method == "POST" and form.validate_on_submit():
         try:
-            name = form.verify_name(form.name).data
+            form.name = form.verify_name(form.name)
+            if form.name.errors:
+                return render_template('accounts/group_add.html', form=form)
+            name = form.name.data
             desc = form.desc.data
             new_group = Group(name=name, desc=desc)
             db.session.add(new_group)
             db.session.commit()
             return redirect(url_for("groups_blueprint.group_list"))
-        except ValidationError as e:
-            form.name.errors = e.args
-            return render_template('accounts/group_add.html', form=form)
         except Exception as e:
-            return flash(message="内部错误，请联系管理员!")
+            return {"message": "内部错误，请联系管理员!"}
     return render_template('accounts/group_add.html', form=form)

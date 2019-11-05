@@ -38,6 +38,7 @@
                       <th>所属用户组</th>
                       <th>状态</th>
                       <th>最后登录时间</th>
+                      <th>操作</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -52,6 +53,7 @@
                         <td>{% if user.groups %}{% for group in user.groups %}{{ group.name }}{% endfor %}{% else %}没有所属组{% endif %}</td>
                         <td>{% if user.status %}正常{% else %}禁用{% endif %}</td>
                         <td>{{ user.last_time }}</td>
+                        <td>aa</td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -68,11 +70,11 @@
     <script type="text/javascript" src="/static/js/plugins/dataTables.bootstrap.min.js"></script>
     <script type="text/javascript">
         $('#sampleTable').DataTable({
-            "dom": '<"row"<"#add_custom.col-sm-12 col-md-7"><"col-sm-12 col-md-5"f>>t<"row"<"col-sm-12 col-md-3"i><"col-sm-12 col-md-5"p><"col-sm-12 col-md-4"l>>',
+            "dom": '<"row"<"#add_custom.col-sm-12 col-md-7"><"col-sm-12 col-md-5"f>>t<"row"<"col-sm-12 col-md-12"<l><p><i>>>',
             "pagingType": "full_numbers",
             "ordering": false,
             language: {
-                "info": "显示 _START_ 到 _END_ 总计 _TOTAL_ 条记录",
+                "info": "共 _TOTAL_ 条记录",
                 "infoEmpty": "显示 0 到 0 of 0 条记录",
                 "lengthMenu": "每页显示 _MENU_ 条记录",
                 "emptyTable": "查询无记录",
@@ -88,7 +90,7 @@
                 },
             },
         });
-        var html = '<a class="btn btn-primary btn-sm" href="' + '{{ url_for("users_blueprint.user_add") }}' + '">添加用户</a>'
+        var html = '<a class="btn btn-primary btn-sm" href="' + '{{ url_for("users_blueprint.user_add") }}' + '">添加</a>'
         $('#add_custom').append(html)
     </script>
 
