@@ -2,9 +2,9 @@
 # _*_ coding: utf-8 _*_
 
 
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, jsonify
 from flask import render_template
-from apps.accounts.models import db, Permission
+from apps.accounts.models import db, Permission, PermissionSchema
 from apps.accounts.forms import AddPermissionForm
 
 
@@ -14,6 +14,8 @@ blueprint = Blueprint('permissions_blueprint', __name__)
 @blueprint.route('/list/', methods=['get'])
 def permission_list():
     permissions = Permission.query.all()
+    if request.args.get('json'):
+        return jsonify(PermissionSchema(many=True, only=('id', 'dis_name')).dump(permissions))
     return render_template('accounts/permission.html', permissions=permissions)
 
 

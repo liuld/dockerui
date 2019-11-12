@@ -2,10 +2,10 @@
 # _*_ coding: utf-8 _*_
 
 
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, jsonify
 from wtforms.validators import ValidationError
 from flask import render_template
-from apps.accounts.models import Group, db
+from apps.accounts.models import Group, db, GroupSchema
 from apps.accounts.forms import AddGroupForm
 
 
@@ -15,6 +15,8 @@ blueprint = Blueprint('groups_blueprint', __name__)
 @blueprint.route('/list/', methods=['get'])
 def group_list():
     groups = Group.query.all()
+    if request.args.get('json'):
+        return jsonify(GroupSchema(many=True, only=('id', 'name')).dump(groups))
     return render_template('accounts/group.html', groups=groups)
 
 

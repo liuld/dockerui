@@ -4,7 +4,15 @@
 
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from marshmallow import fields, ValidationError, EXCLUDE
+from app import db, ma
+
+
+def validate_unique(user_obj, obj, field):
+    res = obj.query.filter_by(**field).first()
+    if not res or res.id == user_obj.id:
+        return True
+    return False
 
 
 class Permission(db.Model):
@@ -104,3 +112,37 @@ group_role = db.Table('group_role', db.Column('group_id', db.Integer, db.Foreign
 
 # 用户组与权限关联表
 group_permission = db.Table('group_permission', db.Column('group_id', db.Integer, db.ForeignKey('groups.id')), db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id')))
+
+
+class PermissionSchema(ma.ModelSchema):
+
+    class Meta:
+        model = Permission
+
+
+class RoleSchema(ma.ModelSchema):
+    permissions = fields.Nested(PermissionSchema, many=True, only=('id', 'dis_name'))
+
+    class Meta:
+        model = Role
+
+
+class GroupSchema(ma.ModelSchema):
+    roles = fields.Nested(RoleSchema, many=True, only=('id', 'name'))
+    permissions = fields.Nested(PermissionSchema, many=True, only=('id', 'dis_name'))
+
+    class Meta:
+        model = Group
+
+
+class UserSchema(ma.ModelSchema):
+    email = fields.Email(required=True, validate=[lambda n: len(n) <= 32])
+    groups = fields.Nested(GroupSchema, many=True, only=('id', 'name', 'roles', 'permissions'))
+    roles = fields.Nested(RoleSchema, many=True, only=('id', 'name', 'permissions'))
+    permissions = fields.Nested(PermissionSchema, many=True, only=('id', 'dis_name'))
+
+    class Meta:
+        model = User
+        unknown = EXCLUDE
+
+

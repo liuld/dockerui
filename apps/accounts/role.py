@@ -2,9 +2,9 @@
 # _*_ coding: utf-8 _*_
 
 
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, jsonify
 from flask import render_template
-from apps.accounts.models import db, Role
+from apps.accounts.models import db, Role, RoleSchema
 from apps.accounts.forms import AddRoleForm
 
 
@@ -14,6 +14,8 @@ blueprint = Blueprint('roles_blueprint', __name__)
 @blueprint.route('/list/', methods=['get'])
 def role_list():
     roles = Role.query.all()
+    if request.args.get('json'):
+        return jsonify(RoleSchema(many=True, only=('id', 'name')).dump(roles))
     return render_template('accounts/role.html', roles=roles)
 
 

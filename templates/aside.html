@@ -1,12 +1,12 @@
 <aside class="app-sidebar">
       <ul class="app-menu">
         <li><a class="app-menu__item active" href="/"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
-        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-user"></i><span class="app-menu__label">账户管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-user-plus"></i><span class="app-menu__label">账户管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
           <ul class="treeview-menu">
-            <li><a class="treeview-item" href="{{ url_for('users_blueprint.user_list') }}"><i class="icon fa fa-circle-o"></i>用户管理</a></li>
-            <li><a class="treeview-item" href="{{ url_for('groups_blueprint.group_list') }}"><i class="icon fa fa-circle-o"></i>用户组管理</a></li>
-            <li><a class="treeview-item" href="{{ url_for('roles_blueprint.role_list') }}"><i class="icon fa fa-circle-o"></i>角色管理</a></li>
-            <li><a class="treeview-item" href="{{ url_for('permissions_blueprint.permission_list') }}"><i class="icon fa fa-circle-o"></i>权限管理</a></li>
+            <li><a class="treeview-item" href="{{ url_for('users_blueprint.user_list') }}"><i class="icon fa fa-user"></i>用户管理</a></li>
+            <li><a class="treeview-item" href="{{ url_for('groups_blueprint.group_list') }}"><i class="icon fa fa-users"></i>用户组管理</a></li>
+            <li><a class="treeview-item" href="{{ url_for('roles_blueprint.role_list') }}"><i class="icon fa fa-user-secret"></i>角色管理</a></li>
+            <li><a class="treeview-item" href="{{ url_for('permissions_blueprint.permission_list') }}"><i class="icon fa fa-user-o"></i>权限管理</a></li>
           </ul>
         </li>
         <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span class="app-menu__label">Forms</span><i class="treeview-indicator fa fa-angle-right"></i></a>
