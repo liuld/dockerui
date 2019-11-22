@@ -16,7 +16,7 @@ def role_list():
     roles = Role.query.all()
     if request.args.get('json'):
         return jsonify(RoleSchema(many=True, only=('id', 'name')).dump(roles))
-    return render_template('accounts/role.html', roles=roles)
+    return render_template('app-accounts/role-list.html', roles=roles)
 
 
 @blueprint.route('/add/', methods=['get', 'post'])

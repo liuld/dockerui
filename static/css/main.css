@@ -15412,7 +15412,7 @@ be a descendant of the grid when it is being dragged.
   }
 }
 
-.dropdown-menu {
+.dropdosidenav-toggledwn-menu {
   border-radius: 0;
   -webkit-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
           box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);

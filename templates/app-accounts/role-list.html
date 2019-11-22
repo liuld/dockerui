@@ -1,0 +1,54 @@
+{% extends 'app-base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="content-title">
+        <span>角色列表</span>
+        <label class="datatable_search_label">
+            <input id="datatable_search" type="search" class="form-control form-control-sm" placeholder="搜索任意字段" aria-controls="datatable">
+        </label>
+        <a href="#" class="btn btn-sm btn-primary">添加角色</a>
+        <a id="OptAll" href="#" style="margin-left: 5px;" class="btn btn-sm btn-danger disabled">删除角色</a>
+    </div>
+</div>
+<div class="content-info">
+    <table class="table table-bordered no_border" id="datatable">
+        <colgroup>
+            <col width="39px">
+            <col>
+            <col>
+            <col>
+            <col>
+            <col width="110px">
+        </colgroup>
+        <thead>
+            <tr>
+                <th><label><input type="checkbox" class="SelectAll"></label></th>
+                <th>角色ID</th>
+                <th>角色名称</th>
+                <th>描述</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for role in roles %}
+            <tr>
+                <td><label><input type="checkbox" class="SelectOne"></label></td>
+                <td>{{ role.id }}</td>
+                <td>{{ role.name }}</td>
+                <td>{{ role.desc }}</td>
+                <td>{{ role.ctime }}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">管理</a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">移除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/static/js/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/js/plugins/dataTables.bootstrap.min.js"></script>
+{% endblock %}

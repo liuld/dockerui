@@ -15,6 +15,8 @@ blueprint = Blueprint('users_blueprint', __name__)
 @blueprint.route('/list/', methods=['get'])
 def user_list():
     users = User.query.all()
+    if request.args.get('json'):
+        return jsonify(UserSchema(many=True, only=('id', 'name')).dump(users))
     return render_template('accounts/user.html', users=users)
 
 

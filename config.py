@@ -11,4 +11,5 @@ DEBUG = True
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@192.168.10.20/dockerui'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = 'test'
+JSON_AS_ASCII = False
 

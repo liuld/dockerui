@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% block css %}{% endblock %}
+    <link rel="stylesheet" href="/static/css/app.css">
+    <title>Docker管理平台</title>
+  </head>
+  <body class="app">
+    <header class="app-header">
+        <a class="app-header__logo" href="#">Docker管理平台</a>
+        <a class="app-header_toggle" href="#" aria-label="Hide Sidebar" data-toggle="sideMenu"></a>
+    </header>
+    <aside class="app-aside">
+        <ul class="app-menu">
+            <li>
+                <a class="app-menu__item active" href="/">
+                    <i class="app-menu__icon fa fa-lg fa-dashboard"></i>
+                    <span class="app-menu__label">Dashboard</span>
+                </a>
+            </li>
+            <li class="treeview">
+              <a class="app-menu__item" href="#" data-toggle="treeview">
+                  <i class="app-menu__icon fa fa-lg fa-user-plus"></i>
+                  <span class="app-menu__label">账户管理</span>
+                  <i class="treeview-indicator fa fa-angle-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a class="treeview-item" href="{{ url_for('users_blueprint.user_list') }}"><i class="treeview-item-icon fa fa-lg fa-user"></i>用户管理</a></li>
+                <li><a class="treeview-item" href="{{ url_for('groups_blueprint.group_list') }}"><i class="treeview-item-icon fa fa-users"></i>用户组管理</a></li>
+                <li><a class="treeview-item" href="{{ url_for('roles_blueprint.role_list') }}"><i class="treeview-item-icon fa fa-lg fa-user-secret"></i>角色管理</a></li>
+                <li><a class="treeview-item" href="{{ url_for('permissions_blueprint.permission_list') }}"><i class="treeview-item-icon fa fa-lg fa-user-o"></i>权限管理</a></li>
+              </ul>
+            </li>
+        </ul>
+    </aside>
+    <main class="app-main">
+        <div class="app-content">
+            <div class="row">
+                <div class="col-md-12">
+                    {% block content %}{% endblock %}
+<!--                    <div class="container-fluid">-->
+<!--                        <div class="content-title">-->
+<!--                        <span>角色信息</span>-->
+<!--                        <a href="#" class="btn btn-sm btn-primary">编辑</a>-->
+<!--                    </div>-->
+<!--                        <div class="content-info">-->
+<!--                        <table class="table table-bordered">-->
+<!--                            <thead>-->
+<!--                                <tr><th colspan="2">基本信息</th></tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                                <tr><td>角色名</td><td>描述</td></tr>-->
+<!--                                <tr><td>创建时间</td><td>修改时间</td></tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                    </div>-->
+<!--                    <div class="container-fluid">-->
+<!--                        <div>-->
+<!--                            <ul class="nav nav-tabs">-->
+<!--                                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#permission_list">角色权限列表</a></li>-->
+<!--                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#group_list">授权组列表</a></li>-->
+<!--                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#user_list">授权用户列表</a></li>-->
+<!--                            </ul>-->
+<!--                            <div class="tab-content">-->
+<!--                              <div class="tab-pane fade active show" id="permission_list">-->
+<!--                                <div class="content-title">-->
+<!--                                    <span>权限列表</span>-->
+<!--                                    <a href="#" class="btn btn-sm btn-primary">添加权限</a>-->
+<!--                                </div>-->
+<!--                                <div class="content-info">-->
+<!--                                    <table class="table table-bordered no_border">-->
+<!--                                        <thead>-->
+<!--                                            <tr>-->
+<!--                                                <th>权限名称</th>-->
+<!--                                                <th>权限显示名</th>-->
+<!--                                                <th>权限描述</th>-->
+<!--                                                <th>创建时间</th>-->
+<!--                                                <th>操作</th>-->
+<!--                                            </tr>-->
+<!--                                        </thead>-->
+<!--                                        <tbody>-->
+<!--                                            <tr>-->
+<!--                                                <td>view_user</td>-->
+<!--                                                <td>查看用户</td>-->
+<!--                                                <td>可以查看用户</td>-->
+<!--                                                <td>2019年11月17日 12:30:00</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="#" class="btn btn-sm btn-info">详细</a>-->
+<!--                                                    <a href="#" class="btn btn-sm btn-info">移除</a>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td>view_user</td>-->
+<!--                                                <td>查看用户</td>-->
+<!--                                                <td>可以查看用户</td>-->
+<!--                                                <td>2019年11月17日 12:30:00</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="#" class="btn btn-sm btn-info">详细</a>-->
+<!--                                                    <a href="#" class="btn btn-sm btn-info">移除</a>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                        </tbody>-->
+<!--                                    </table>-->
+<!--                                </div>-->
+<!--                              </div>-->
+<!--                              <div class="tab-pane fade" id="group_list">-->
+<!--                                  授权组列表-->
+<!--                              </div>-->
+<!--                              <div class="tab-pane fade" id="user_list">-->
+<!--                                  授权用户列表-->
+<!--                              </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js" integrity="sha384-L2pyEeut/H3mtgCBaUNw7KWzp5n9+4pDQiExs933/5QfaTh8YStYFFkOzSoXjlTb" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    {% block js %}{% endblock %}
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>
+</html>

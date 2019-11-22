@@ -9,16 +9,16 @@
 {% endblock %}
 
 {% block main %}
-<main class="app-content">
+    <main class="app-content">
       <div class="app-title">
         <div>
-          <h1><i class="fa fa-th-list"></i> Data Table</h1>
-          <p>Table to display analytical data effectively</p>
+          <h1><i class="fa fa-users fa-lg"></i> 用户组管理</h1>
+          <p>可以对用户组进行增/删/改/查/操作</p>
         </div>
         <ul class="app-breadcrumb breadcrumb side">
           <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-          <li class="breadcrumb-item">Tables</li>
-          <li class="breadcrumb-item active"><a href="#">Data Table</a></li>
+          <li class="breadcrumb-item">账户管理</li>
+          <li class="breadcrumb-item active"><a href="{{ url_for('groups_blueprint.group_list') }}">用户组管理</a></li>
         </ul>
       </div>
       <div class="row">
@@ -29,25 +29,34 @@
                 <table class="table table-hover table-bordered" id="sampleTable">
                   <thead>
                     <tr>
+                      <th><input type="checkbox" class="select_all_box"></th>
                       <th>Id</th>
                       <th>组名</th>
-                      <th>组角色</th>
+
                       <th>组成员</th>
-                      <th>组权限</th>
+<!--                      <th>组角色</th>  -->
+<!--                      <th>组权限</th>-->
                       <th>组描述</th>
                       <th>创建时间</th>
+                      <th>操作</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for group in groups %}
                     <tr>
+                        <td><input type="checkbox" class="select_one_box" value="{{ group.id }}"></td>
                         <td>{{ group.id }}</td>
                         <td>{{ group.name }}</td>
-                        <td>{% if group.roles %}{% for role in group.roles %}{{ role.name }}{% endfor %}{% else %}没有所属角色{% endif %}</td>
-                        <td>{% if group.users %}{% for user in group.users %}{{ user.name }}{% endfor %}{% else %}组内没有成员{% endif %}</td>
-                        <td>{% if group.permissions %}{% for permission in group.permissions %}{{ permission.dis_name }}{% endfor %}{% else %}该组没有赋予权限{% endif %}</td>
+<!--                        <td>{% if group.roles %}{% for role in group.roles %}{{ role.name }}{% endfor %}{% else %}没有所属角色{% endif %}</td>-->
+                        <td>[{% if group.users %}{% for user in group.users %}{{ user.name }} | {% endfor %}{% else %}组内没有成员{% endif %}]</td>
+<!--                        <td>{% if group.permissions %}{% for permission in group.permissions %}{{ permission.dis_name }}{% endfor %}{% else %}该组没有赋予权限{% endif %}</td>-->
                         <td>{{ group.desc }}</td>
                         <td>{{ group.ctime }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button data-id="{{ group.id }}" data-url="{{ url_for('groups_blueprint.group_list') }}" data-toggle="modal" data-target="#Group_info_modify_modal" type="button" class="btn btn-warning btn-sm Group_info_modify">修改</button>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -58,24 +67,180 @@
         </div>
       </div>
     </main>
+    <!-- 修改用户组信息Modal -->
+    <div class="modal fade" id="Group_info_modify_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" style="overflow:scroll;"  id="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">修改用户组</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                        <label class="control-label" for="name">用户组名</label>
+                        <input type="hidden" id="gid">
+                        <input class="form-control" id="name" type="text" placeholder="请输入用户组名">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                        <label class="control-label" for="desc">用户组描述</label>
+                        <input class="form-control" id="desc" type="text" placeholder="请输入用户组描述">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="group_roles">组角色</label>
+                            <select class="form-control" id="group_roles" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="group_users">组内成员</label>
+                            <select class="form-control" id="group_users" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="group_permissions">组权限</label>
+                            <select class="form-control" id="group_permissions" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="button" id="Group_info_modify_submit">提交</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">关闭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 添加用户Modal -->
+    <div class="modal fade" id="Group_Add_User_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" style="overflow:scroll;" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">添加用户到用户组</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="Group_Add_User_select2">选择用户</label>
+                            <select class="form-control" id="Group_Add_User_select2" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="button" id="Group_Add_User_submit">提交</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">关闭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 添加角色Modal -->
+    <div class="modal fade" id="Group_Add_Role_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" style="overflow:scroll;" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">添加角色</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="Group_Add_Role_select2">选择角色</label>
+                            <select class="form-control" id="Group_Add_Role_select2" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="button" id="Group_Add_Role_submit">提交</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">关闭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 添加权限Modal -->
+    <div class="modal fade" id="Group_Add_Permission_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" style="overflow:scroll;" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">添加权限</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="Group_Add_Permission_select2">请选择权限</label>
+                            <select class="form-control" id="Group_Add_Permission_select2" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="button" id="Group_Add_Permission_submit">提交</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">关闭</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!--    按钮html-->
+    <div id="button_html" style="display: none;">
+        <a class="btn btn-primary btn-sm" href="{{ url_for('groups_blueprint.group_add') }}">添加用户组</a>
+        <div class="btn-group" role="group" aria-label="Button group dropdown">
+            <button class="btn btn-sm btn-danger dropdown-toggle disabled" id="btnGroupDrop4" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            批量操作<span class="caret"></span></button>
+            <div class="dropdown-menu dropdown-menu-left">
+                <button id="Group_Add_User" type="button" data-toggle="modal" data-target="#Group_Add_User_modal"  class="dropdown-item">添加用户</button>
+                <button id="Group_Add_Role" type="button"  data-toggle="modal" data-target="#Group_Add_Role_modal" class="dropdown-item">添加角色</button>
+                <button id="Group_Add_Permission" type="button" data-toggle="modal" data-target="#Group_Add_Permission_modal"  class="dropdown-item">添加权限</button>
+                <button id="Group_Del" type="button"  class="dropdown-item text-danger">删除</button>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 {% block js %}
     <script type="text/javascript" src="/static/js/plugins/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="/static/js/plugins/dataTables.bootstrap.min.js"></script>
     <script type="text/javascript">
-        $('#sampleTable').DataTable({
-            "dom": '<"row"<"#add_custom.col-sm-12 col-md-7"><"col-sm-12 col-md-5"f>>t<"row"<"col-sm-12 col-md-3"i><"col-sm-12 col-md-5"p><"col-sm-12 col-md-4"l>>',
+        let dtable = $('#sampleTable').DataTable({
+            "dom": '<"row"<"#add_custom.col-sm-12 col-md-7"><"col-sm-12 col-md-5"f>>t<"row text-right"<"col-md-8 offset-md-4"<"group_css_lip"i><"group_css_lip"p><"group_css_lip"l>>>',
             "pagingType": "full_numbers",
             "ordering": false,
+            "aLengthMenu": [[10, 20, 40, 100], ['10条每页', '20条每页', '40条每页', '100条每页']],
             language: {
-                "info": "显示 _START_ 到 _END_ 总计 _TOTAL_ 条记录",
+                "info": "共 _TOTAL_ 条记录",
                 "infoEmpty": "显示 0 到 0 of 0 条记录",
-                "lengthMenu": "每页显示 _MENU_ 条记录",
+                "lengthMenu": "_MENU_",
                 "emptyTable": "查询无记录",
                 "loadingRecords": "加载中...",
                 "zeroRecords": "查询无记录",
                 "search": "",
-                "searchPlaceholder": "search",
+                "searchPlaceholder": "搜索任意字段",
                 "oPaginate": {
                     "sFirst": "首页",
                     "sPrevious": "上页",
@@ -84,8 +249,408 @@
                 },
             },
         });
-        var html = '<a class="btn btn-primary btn-sm" href="' + '{{ url_for("groups_blueprint.group_add") }}' + '">添加用户组</a>'
-        $('#add_custom').append(html)
+        $('#add_custom').append($("#button_html").html());
     </script>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/static/js/plugins/select2.min.js"></script>
+    <script>
+        $(function () {
+            //点击选中
+            $("input.select_one_box").on('click', function () {
+                if ($(".select_one_box:checkbox:checked").length > 0) {
+                    $("#btnGroupDrop4").removeClass("disabled");
+                }else{
+                    $("#btnGroupDrop4").addClass("disabled");
+                }
+                if (($("input.select_one_box:checkbox:checked").length - $(".select_one_box:checkbox").length) === 0){
+                    $("input.select_all_box:checkbox").prop("checked", true);
+                }else{
+                    $("input.select_all_box:checkbox").prop("checked", false);
+                }
+            });
+            //点击全选/取消全选
+            $("input.select_all_box").on('click', function () {
+                if (this.checked){
+                    $("input.select_one_box").prop("checked", true);
+                }else{
+                    $("input.select_one_box").prop("checked", false);
+                }
+                if ($(".select_one_box:checkbox:checked").length > 0) {
+                    $("#btnGroupDrop4").removeClass("disabled");
+                }else{
+                    $("#btnGroupDrop4").addClass("disabled");
+                }
+            });
+            //批量删除用户组
+            $("#Group_Del").on('click', function () {
+                //获取选中的checkbox的group id
+                let groups = [];
+                $(".select_one_box:checkbox:checked").each(function(i){
+                    groups[i] = $(this).val();
+                });
+                swal({
+                  title: "确认删除!",
+                  text: "您确认要删除id为"+groups+'的用户组吗?',
+                  icon: "warning",
+                  buttons: true,
+                  dangerMode: true,
+                }).then((willDelete) => {
+                  if (willDelete) {
+                    $.ajax({
+                        url: "{{ url_for('groups_blueprint.group_modify') }}",
+                        type: 'delete',
+                        data: {
+                            'csrf_token': '{{ csrf_token }}',
+                            'g_list': JSON.stringify(groups)
+                        },
+                        success: function (res) {
+                            if (res.result){
+                               swal("操作成功!", {
+                                  icon: "success",
+                               }).then((value) => {window.location.reload()});
+                            }else{
+                                swal({
+                                  title: "操作失败!",
+                                  text: res.errors,
+                                  icon: "error",
+                                  button: "返回",
+                                });
+                            }
+                        }
+                    });
+                  }
+                });
+            });
+            //获取所有用户组并放到select2中初始化
+            $("#Group_Add_User").on('click', function () {
+                $.ajax({
+                    url: "{{ url_for('users_blueprint.user_list') }}"+"?json=1",
+                    type: 'get',
+                    success: function (data) {
+                        let html = '<optgroup label="请选择用户">';
+                        let Group_Add_User_select2 = $("#Group_Add_User_select2");
+                        if(data.length > 0){
+                            $.each(data, function (index, item) {
+                                html += '<option value="'+ item.id +'">'+ item.name +'</option>';
+                            });
+                        }else{
+                           html += '<option>无</option>';
+                        }
+                        html += '</optgroup>';
+                        Group_Add_User_select2.html(html);
+                        Group_Add_User_select2.select2({ width: "100%" });
+                    }
+                });
+            });
+            //批量添加用户到用户组
+            $("#Group_Add_User_submit").on('click', function () {
+                let select_users = $("#Group_Add_User_select2").val();
+                let g_list = [];
+                if (select_users.length > 0){
+                    $(".select_one_box:checkbox:checked").each(function () {
+                        g_list.push($(this).val())
+                    });
+                    $.ajax({
+                        url: "{{ url_for('groups_blueprint.group_modify') }}",
+                        type: 'put',
+                        data: {
+                            'users': JSON.stringify(select_users),
+                            'groups': JSON.stringify(g_list),
+                            'csrf_token': "{{ csrf_token }}",
+                            'option': 'group_add_users'
+                        },
+                        success: function (res) {
+                            if (res.result){
+                                swal({
+                                  title: "操作成功",
+                                  //text: '添加用户组成功',
+                                  icon: "success",
+                                  // button: "返回",
+                                }).then((value) => {window.location.reload()});
+                            }else {
+                                swal({
+                                    title: "操作失败",
+                                    text: res.errors,
+                                    icon: "error",
+                                    button: "返回",
+                                });
+                            }
+                        }
+                    });
+                }else {
+                    swal({
+                      title: "操作失败",
+                      text: '请选择用户',
+                      icon: "error",
+                      button: "返回",
+                    });
+                }
+            });
+            //获取所有角色并放到select2中初始化
+            $("#Group_Add_Role").on('click', function () {
+                $.ajax({
+                    url: "{{ url_for('roles_blueprint.role_list') }}"+"?json=1",
+                    type: 'get',
+                    success: function (data) {
+                        let html = '<optgroup label="请选择角色">';
+                        let Group_Add_Role_select2 = $("#Group_Add_Role_select2");
+                        if(data.length > 0){
+                            $.each(data, function (index, item) {
+                                html += '<option value="'+ item.id +'">'+ item.name +'</option>';
+                            });
+                        }else{
+                           html += '<option>无</option>';
+                        }
+                        html += '</optgroup>';
+                        Group_Add_Role_select2.html(html);
+                        Group_Add_Role_select2.select2({ width: "100%" });
+                    }
+                });
+            });
+            //批量添加角色
+            $("#Group_Add_Role_submit").on('click', function () {
+                let select_roles = $("#Group_Add_Role_select2").val();
+                let g_list = [];
+                if (select_roles.length > 0){
+                    $(".select_one_box:checkbox:checked").each(function () {
+                        g_list.push($(this).val())
+                    });
+                    $.ajax({
+                        url: "{{ url_for('groups_blueprint.group_modify') }}",
+                        type: 'put',
+                        data: {
+                            'groups': JSON.stringify(g_list),
+                            'roles': JSON.stringify(select_roles),
+                            'csrf_token': "{{ csrf_token }}",
+                            'option': 'group_add_roles'
+                        },
+                        success: function (res) {
+                            if (res.result){
+                                swal({
+                                  title: "操作成功",
+                                  //text: '添加角色成功',
+                                  icon: "success",
+                                  // button: "返回",
+                                }).then((value) => {window.location.reload()});
+                            }else {
+                                swal({
+                                    title: "操作失败",
+                                    text: res.errors,
+                                    icon: "error",
+                                    button: "返回",
+                                });
+                            }
+                        }
+                    });
+                }else {
+                    swal({
+                      title: "操作失败",
+                      text: '请选择角色',
+                      icon: "error",
+                      button: "返回",
+                    });
+                }
+            });
+            //获取所有权限并放到select2中初始化
+            $("#Group_Add_Permission").on('click', function () {
+                $.ajax({
+                    url: "{{ url_for('permissions_blueprint.permission_list') }}"+"?json=1",
+                    type: 'get',
+                    success: function (data) {
+                        let html = '<optgroup label="请选择权限">';
+                        let Group_Add_Permission_select2 = $("#Group_Add_Permission_select2");
+                        if(data.length > 0){
+                            $.each(data, function (index, item) {
+                                html += '<option value="'+ item.id +'">'+ item.dis_name +'</option>';
+                            });
+                        }else{
+                           html += '<option>无</option>';
+                        }
+                        html += '</optgroup>';
+                        Group_Add_Permission_select2.html(html);
+                        Group_Add_Permission_select2.select2({ width: "100%" });
+                    }
+                });
+            });
+            //批量添加权限
+            $("#Group_Add_Permission_submit").on('click', function () {
+                let select_permissions = $("#Group_Add_Permission_select2").val();
+                let groups = [];
+                if (select_permissions.length > 0){
+                    $(".select_one_box:checkbox:checked").each(function () {
+                        groups.push($(this).val())
+                    });
+                    $.ajax({
+                        url: "{{ url_for('groups_blueprint.group_modify') }}",
+                        type: 'put',
+                        data: {
+                            'groups': JSON.stringify(groups),
+                            'permissions': JSON.stringify(select_permissions),
+                            'csrf_token': "{{ csrf_token }}",
+                            'option': 'group_add_permissions'
+                        },
+                        success: function (res) {
+                            if (res.result){
+                                swal({
+                                  title: "操作成功",
+                                  icon: "success",
+                                }).then((value) => {window.location.reload()});
+                            }else {
+                                swal({
+                                    title: "操作失败",
+                                    text: res.errors,
+                                    icon: "error",
+                                    button: "返回",
+                                });
+                            }
+                        }
+                    });
+                }else {
+                    swal({
+                      title: "操作失败",
+                      text: '请选择权限',
+                      icon: "error",
+                      button: "返回",
+                    });
+                }
+            });
+            //修改用户组信息模态框
+            $(".Group_info_modify").on('click', function () {
+                let url = $(this).attr("data-url");
+                let gid = $(this).attr("data-id");
+                let group_permissions_select2 = $("#group_permissions");
+                let group_roles_select2 = $("#group_roles");
+                let group_users_select2 = $("#group_users");
+                $.ajax({
+                    url: url + '?is_modify=true&id='+gid,
+                    type: 'get',
+                    success: function (data) {
+                        //获取用户数据并填充到html
+                        $("#name").val(data.name);
+                        $("#desc").val(data.desc);
+                        //遍历出角色id
+                        let role_ids = [];
+                        if (data.roles.length > 0) {
+                            $.each(data.roles, function (index, item) {
+                                role_ids.push(item.id)
+                            })
+                        }
+                        //构建roles下拉html并追加到页面中
+                        let roles_html = '';
+                        if (data.all_roles.length > 0){
+                            roles_html += '<optgroup label="请选择角色">';
+                            $.each(data.all_roles, function (index, item) {
+                                if ($.inArray(item.id, role_ids)+1){
+                                    roles_html += '<option selected value="'+ item.id +'">'+ item.name +'</option>';
+                                }else{
+                                    roles_html += '<option value="'+ item.id +'">'+ item.name +'</option>';
+                                }
+                            });
+                            roles_html += '</optgroup>';
+                        }else{
+                            roles_html += '<optgroup label="请选择角色"><option>无</option></optgroup>';
+                        }
+                        group_roles_select2.html(roles_html);
+                        //遍历出用户组id
+                        let member_ids = [];
+                        if (data.users.length > 0) {
+                            for(let i=0; i<data.users.length; i++){
+                                member_ids.push(data.users[i].id);
+                            }
+                        }
+                        //构建用户组下拉html并追加到页面中
+                        let users_html = '';
+                        if (data.all_users.length > 0){
+                            users_html += '<optgroup label="请选择用户">';
+                            $.each(data.all_users, function (index, item) {
+                                if ($.inArray(item.id, member_ids)+1){
+                                    users_html += '<option selected value="'+ item.id +'">'+ item.name +'</option>';
+                                }else{
+                                    users_html += '<option value="'+ item.id +'">'+ item.name +'</option>';
+                                }
+                            });
+                            users_html += '</optgroup>';
+                        }else{
+                            users_html += '<optgroup label="请选择用户组"><option>无</option></optgroup>';
+                        }
+                        group_users_select2.html(users_html);
+                        //遍历出权限id
+                        let permission_ids = [];
+                        if (data.permissions.length > 0) {
+                            for(let i=0; i<data.permissions.length; i++){
+                                permission_ids.push(data.permissions[i].id);
+                            }
+                        }
+                        //构建用户组下拉html并追加到页面中
+                        var permissions_html = '';
+                        if (data.all_permissions.length > 0){
+                            permissions_html += '<optgroup label="请选择权限">';
+                            $.each(data.all_permissions, function (index, item) {
+                                if ($.inArray(item.id, permission_ids)+1){
+                                    permissions_html += '<option selected value="'+ item.id +'">'+ item.dis_name +'</option>';
+                                }else{
+                                    permissions_html += '<option value="'+ item.id +'">'+ item.dis_name +'</option>';
+                                }
+                            });
+                            permissions_html += '</optgroup>';
+                        }else{
+                            permissions_html += '<optgroup label="请选择权限"><option>无</option></optgroup>';
+                        }
+                        group_permissions_select2.html(permissions_html);
+                        $("#gid").val(gid);
+                        //初始化select2插件
+                        group_roles_select2.select2({ width: "100%" });
+                        group_users_select2.select2({ width: "100%" });
+                        group_permissions_select2.select2({ width: "100%" });
+                    }
+                });
+            });
+            $("#Group_info_modify_submit").on('click', function () {
+                let gid = $("#gid").val();
+                let name = $("#name").val();
+                let desc = $("#desc").val();
+                let roles = $('#group_roles').val();
+                let users = $('#group_users').val();
+                let permissions = $('#group_permissions').val();
+                if (name && desc) {
+                    $.ajax({
+                    url: '{{ url_for("groups_blueprint.group_modify") }}',
+                    type: 'post',
+                    data: {
+                        'id': gid,
+                        'name': name,
+                        'desc': desc,
+                        'roles': JSON.stringify(roles),
+                        'users': JSON.stringify(users),
+                        'permissions': JSON.stringify(permissions),
+                        'csrf_token': '{{ csrf_token }}'
+                    },
+                    success: function (res) {
+                        if(res.result){
+                            swal({
+                              title: "操作成功!",
+                              icon: "success",
+                            }).then((value) => {window.location.reload()});
+                            //
+                        }else{
+                            swal({
+                              title: "操作失败!",
+                              text: res.errors,
+                              icon: "error",
+                              button: "返回",
+                            });
+                        }
+                    }
+                });
+                }else{
+                    swal({
+                      title: "操作失败",
+                      text: '用户组名称和描述不能为空',
+                      icon: "error",
+                      button: "返回",
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

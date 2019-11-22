@@ -118,6 +118,7 @@ class PermissionSchema(ma.ModelSchema):
 
     class Meta:
         model = Permission
+        unknown = EXCLUDE
 
 
 class RoleSchema(ma.ModelSchema):
@@ -125,14 +126,16 @@ class RoleSchema(ma.ModelSchema):
 
     class Meta:
         model = Role
+        unknown = EXCLUDE
 
 
 class GroupSchema(ma.ModelSchema):
-    roles = fields.Nested(RoleSchema, many=True, only=('id', 'name'))
+    roles = fields.Nested(RoleSchema, many=True, only=('id', 'name', 'permissions'))
     permissions = fields.Nested(PermissionSchema, many=True, only=('id', 'dis_name'))
 
     class Meta:
         model = Group
+        unknown = EXCLUDE
 
 
 class UserSchema(ma.ModelSchema):
